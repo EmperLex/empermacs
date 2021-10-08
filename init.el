@@ -6,6 +6,8 @@
 
 
 
+
+
 ;; *************** PACKAGE / CODE MANAGEMENT ****************
 
 ;; Install MELPA repository along with default ELPA repo.
@@ -26,14 +28,20 @@
 ;; load use-package package
 (require 'use-package)
 
+;; tell use-package to always install not yet installed packages when
+;; such a package appears
+(setq use-package-always-ensure t)
+
+
+
+
 
 ;; *************** APPEARANCE ****************
 
-;; Add custom theme folder to load path
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-
 ;; Load the IDEA like theme from themes folder (https://github.com/ianyepan/jetbrains-darcula-emacs-theme)
-(load-theme 'jetbrains-darcula t)
+(use-package jetbrains-darcula-theme
+  :config
+  (load-theme 'jetbrains-darcula t))
 
 ;; Dont show ugly start page - will start in scratch buffer
 (setq inhibit-startup-message t)
@@ -63,8 +71,18 @@
 ;; set font size - well my eyes are not the best :)
 (set-face-attribute 'default nil :height 150)
 
+;; install doom-modeline
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1))
 
+;; show also minor modes in doom-modeline
+(setq doom-modeline-minor-modes t)
 
+;; NOTE: requires one time: M-x all-the-icons-install-fonts
+;; (https://github.com/domtronn/all-the-icons.el#installation)
+(use-package all-the-icons
+  :ensure t)
 
 
 ;; ************ ORG MODE ***************
@@ -76,7 +94,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(org-agenda-files (quote ("~/userdata/todo/todo.org")))
- '(package-selected-packages (quote (use-package))))
+ '(package-selected-packages
+   (quote
+    (doom-modeline ivy jetbrains-darcula-theme use-package))))
 
 ;; org-mode keybindings
 (global-set-key "\C-ca" 'org-agenda)
@@ -96,11 +116,10 @@
 
 ;; configure org-bullets package
 (use-package org-bullets
-  :ensure t
   :config
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
-;; custom colours (faces) for todo item states
+;; org-mode custom colours (faces) for todo item states
 (setq org-todo-keyword-faces
       '(("ROUTINE" . "choclate4")
 	("IDEA" . "khaki4")
@@ -112,3 +131,15 @@
 	("WAITING" . "orange")
 	("DONE" . "green")
 	("NEXT" .  "cornflower blue")))
+
+
+
+
+
+;;  ************ Convenience things ***************
+
+;; Install Ivy autocompletion package
+(use-package ivy
+  :ensure t
+  :config
+  (ivy-mode 1))
